@@ -1,12 +1,27 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+"""
+Module Docstring:
+A module that opens a new browser tab for each book in a list, 
+searching for information about the book on Wikipedia, Goodreads, or Google.
+"""
+
 import time
+from selenium import webdriver
 
 def read_books(filename):
-    with open(filename, "r") as file:
+    """
+    Reads book titles from a file.
+    :param filename: The name of the file.
+    :return: A list of book titles.
+    """
+    with open(filename, "r", encoding='utf-8') as file:
         return [book.strip() for book in file.readlines()]
 
 def search_book(driver, book_title):
+    """
+    Searches for a book on Wikipedia, Goodreads, or Google.
+    :param driver: The webdriver instance.
+    :param book_title: The title of the book.
+    """
     def open_page(url):
         driver.get(url)
         time.sleep(2)  # wait for the page to load
@@ -17,7 +32,7 @@ def search_book(driver, book_title):
             link = driver.find_element_by_partial_link_text(site.capitalize())
             link.click()
             return True
-        except:
+        except Exception:  # specify the general exception
             return False
 
     # Use Wikipedia first
@@ -28,10 +43,17 @@ def search_book(driver, book_title):
             open_page(f"https://www.google.com/search?q={book_title}")
 
 def open_new_tab(driver):
+    """
+    Opens a new tab and switches to it.
+    :param driver: The webdriver instance.
+    """
     driver.execute_script("window.open('');")
     driver.switch_to.window(driver.window_handles[-1])  # Switch to the new tab
 
 def main():
+    """
+    Main function that reads book titles from a file and opens a new tab for each book.
+    """
     # Create a new instance of the Edge/Chrome driver
     driver = webdriver.Edge()  # or webdriver.Chrome()
 
