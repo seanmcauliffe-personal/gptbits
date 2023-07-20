@@ -1,3 +1,7 @@
+import ast
+import astunparse
+import os
+
 class ConstantToUppercase(ast.NodeTransformer):
     def __init__(self):
         self.constants = set()
@@ -27,6 +31,7 @@ class ConstantToUppercase(ast.NodeTransformer):
             return (old_name, node)
         return node
 
+
 def process_file(file_path):
     with open(file_path, "r") as source:
         tree = ast.parse(source.read())
@@ -50,6 +55,19 @@ def process_file(file_path):
 
     with open(file_path, "w") as source:
         source.write(new_code)
+
+
+def process_directory(dir_path):
+    """
+    Process all .py files in the given directory and its subdirectories
+    """
+    # Walk through all files in the directory
+    for dirpath, dirnames, filenames in os.walk(dir_path):
+        for filename in filenames:
+            if filename.endswith(".py"):
+                file_path = os.path.join(dirpath, filename)
+                process_file(file_path)
+
 
 if __name__ == "__main__":
     # Replace this with the path to your directory
